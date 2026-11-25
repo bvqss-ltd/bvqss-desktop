@@ -57,6 +57,8 @@ function createWindow() {
   const wc = win.webContents;
   wc.setUserAgent(wc.getUserAgent() + ` BVQSSDesktop/${VERSION} (${CFG.key})`);
   wc.setWindowOpenHandler(({ url }) => {
+    // stored files opened with a short-lived signed link: save them straight away (Save dialog), no empty window
+    if (/\.supabase\.co\/storage\/v1\/object\/sign\//.test(url) && /[?&]download=/.test(url)) { wc.downloadURL(url); return { action: 'deny' }; }
     if (isOwn(url)) return { action: 'allow', overrideBrowserWindowOptions: { width: 1100, height: 860, autoHideMenuBar: true, icon: path.join(__dirname, '..', 'build', 'icon.png'), webPreferences: { contextIsolation: true, sandbox: true, nodeIntegration: false } } };
     if (/^(https?|mailto|tel):/i.test(url)) shell.openExternal(url);
     return { action: 'deny' };
