@@ -2,7 +2,7 @@
   "name": "bvqss-desktop",
   "private": true,
   "version": "1.0.0",
-  "description": "Windows and Mac apps for BVQSS Tender, BVQSS Value and BVQSS Damage",
+  "description": "Windows and Mac apps for BVQSS Tender, BVQSS Value, BVQSS Damage and BVQSS HSE",
   "author": "BVQSS <office@bvqss.com>",
   "homepage": "https://bvqss.com",
   "main": "src/main.js",
@@ -11,6 +11,7 @@
     "start": "node scripts/prepare.mjs tender && electron .",
     "start:value": "node scripts/prepare.mjs value && electron .",
     "start:damage": "node scripts/prepare.mjs damage && electron .",
+    "start:hse": "node scripts/prepare.mjs hse && electron .",
     "dist": "electron-builder --config build/builder.json --publish never"
   },
   "dependencies": {

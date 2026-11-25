@@ -7,6 +7,7 @@ Windows and Mac apps for the BVQSS Construction Suite:
 | **BVQSS Tender** | bvqsstender.com | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-Tender-Setup.exe) | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-Tender-Mac.dmg) |
 | **BVQSS Value** | bvqssvalue.com | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-Value-Setup.exe) | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-Value-Mac.dmg) |
 | **BVQSS Damage** | bvqssdamage.com | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-Damage-Setup.exe) | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-Damage-Mac.dmg) |
+| **BVQSS HSE** | bvqsshse.com | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-HSE-Setup.exe) | [Download](https://github.com/bvqss-ltd/bvqss-desktop/releases/latest/download/BVQSS-HSE-Mac.dmg) |
 
 Each app is a desktop window around its live website, so it always shows the current version of the site.
 Sign in with your usual BVQSS account; access and data are exactly as on the website. No data is stored in this repository.
@@ -22,7 +23,7 @@ What the app adds over a browser tab:
 GitHub → **Actions → Desktop apps → Run workflow**, type the new version (e.g. `1.0.1`). About 15 minutes later the
 release appears under **Releases** and installed apps update themselves.
 
-Local test: `npm install`, then `npm start` (Tender), `npm run start:value` or `npm run start:damage`.
+Local test: `npm install`, then `npm start` (Tender), `npm run start:value`, `npm run start:damage` or `npm run start:hse`.
 
 Folder: `apps/*.json` (name, address, allowed domains per app) · `src/` (the app) · `assets/` (icons) ·
 `scripts/prepare.mjs` (prepares one app for building) · `.github/workflows/desktop.yml` (build and release).
