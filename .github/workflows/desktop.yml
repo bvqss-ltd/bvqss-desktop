@@ -111,6 +111,6 @@ jobs:
           cd out
           if ! gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release create "$TAG" -R "$GITHUB_REPOSITORY" --title "BVQSS desktop apps $TAG" \
-              --notes "Windows and Mac apps for BVQSS Tender, BVQSS Value and BVQSS Damage. Download: BVQSS-<App>-Setup.exe (Windows) or BVQSS-<App>-Mac.dmg (Mac)."
+              --notes "Windows and Mac apps for BVQSS Tender, BVQSS Value and BVQSS Damage. Windows: BVQSS-Tender-Setup.exe, BVQSS-Value-Setup.exe, BVQSS-Damage-Setup.exe. Mac: BVQSS-Tender-Mac.dmg, BVQSS-Value-Mac.dmg, BVQSS-Damage-Mac.dmg. Installed apps update themselves."
           fi
           gh release upload "$TAG" -R "$GITHUB_REPOSITORY" --clobber *
