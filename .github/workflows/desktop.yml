@@ -1,0 +1,116 @@
+# Builds the BVQSS desktop apps (Windows installer + Mac disk image) and publishes them as a GitHub release.
+# Run it from GitHub: Actions → Desktop apps → Run workflow, and type the version (e.g. 1.0.1).
+# The installed apps update themselves from these releases.
+#
+# Optional repository secrets (Settings → Secrets and variables → Actions). Without them the Mac app is built unsigned.
+#   MAC_CERT_P12, MAC_CERT_PASSWORD        Developer ID Application certificate (.p12, base64) and its password
+#   ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8  App Store Connect API key, used to notarize the Mac app with Apple
+name: Desktop apps
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version number (e.g. 1.0.1). Must be higher than the last release for apps to update.
+        required: true
+        default: 1.0.0
+      apps:
+        description: Which apps
+        type: choice
+        options: [all, tender, value, damage]
+        default: all
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(inputs.apps == 'all' && '["tender","value","damage"]' || format('["{0}"]', inputs.apps)) }}
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/prepare.mjs ${{ matrix.app }} ${{ inputs.version }}
+
+      - name: Mac signing and notarization (when the secrets are set)
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          MAC_CERT_P12: ${{ secrets.MAC_CERT_P12 }}
+          MAC_CERT_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          if [ -n "$MAC_CERT_P12" ]; then
+            echo "CSC_LINK=$MAC_CERT_P12" >> "$GITHUB_ENV"
+            echo "CSC_KEY_PASSWORD=$MAC_CERT_PASSWORD" >> "$GITHUB_ENV"
+            echo "Signing with the Developer ID certificate."
+          else
+            echo "CSC_IDENTITY_AUTO_DISCOVERY=false" >> "$GITHUB_ENV"
+            echo "::warning::MAC_CERT_P12 not set: the Mac app is built unsigned."
+          fi
+          if [ -n "$MAC_CERT_P12" ] && [ -n "$ASC_KEY_P8" ] && [ -n "$ASC_KEY_ID" ] && [ -n "$ASC_ISSUER_ID" ]; then
+            printf '%s\n' "$ASC_KEY_P8" > "$RUNNER_TEMP/AuthKey.p8"
+            echo "APPLE_API_KEY=$RUNNER_TEMP/AuthKey.p8" >> "$GITHUB_ENV"
+            echo "APPLE_API_KEY_ID=$ASC_KEY_ID" >> "$GITHUB_ENV"
+            echo "APPLE_API_ISSUER=$ASC_ISSUER_ID" >> "$GITHUB_ENV"
+            node scripts/prepare.mjs ${{ matrix.app }} ${{ inputs.version }}   # re-run so notarize is switched on
+          fi
+
+      - name: Build
+        shell: bash
+        run: npx electron-builder --config build/builder.json --publish never ${{ runner.os == 'macOS' && '--mac' || '--win' }}
+
+      - name: Remove the key
+        if: always() && runner.os == 'macOS'
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/AuthKey.p8"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-${{ runner.os }}
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.zip
+            dist/*.blockmap
+            dist/*.yml
+            !dist/builder-debug.yml
+            !dist/builder-effective-config.yaml
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Stable download names (for the websites' Download pages)
+        run: |
+          cd out
+          for f in *-Setup-*.exe; do [ -e "$f" ] && cp "$f" "${f%%-Setup-*}-Setup.exe"; done
+          for f in *-mac.dmg; do [ -e "$f" ] && cp "$f" "$(echo "$f" | sed -E 's/-[0-9.]+-mac\.dmg$/-Mac.dmg/')"; done
+          ls -la
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ inputs.version }}
+        run: |
+          cd out
+          if ! gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" -R "$GITHUB_REPOSITORY" --title "BVQSS desktop apps $TAG" \
+              --notes "Windows and Mac apps for BVQSS Tender, BVQSS Value and BVQSS Damage. Download: BVQSS-<App>-Setup.exe (Windows) or BVQSS-<App>-Mac.dmg (Mac)."
+          fi
+          gh release upload "$TAG" -R "$GITHUB_REPOSITORY" --clobber *
