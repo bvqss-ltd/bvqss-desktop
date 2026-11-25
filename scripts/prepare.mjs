@@ -1,4 +1,4 @@
-// Prepares one app for building: node scripts/prepare.mjs <tender|value|damage> [version]
+// Prepares one app for building: node scripts/prepare.mjs <tender|value|damage|hse> [version]
 // Writes build/app.json (which site to open), build/icon.png (from assets/icon-<app>.svg) and build/builder.json.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -7,7 +7,7 @@ import sharp from 'sharp';
 const key = process.argv[2];
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..');
 const cfgPath = path.join(root, 'apps', key + '.json');
-if (!fs.existsSync(cfgPath)) { console.error('Usage: node scripts/prepare.mjs <tender|value|damage> [version]'); process.exit(1); }
+if (!fs.existsSync(cfgPath)) { console.error('Usage: node scripts/prepare.mjs <tender|value|damage|hse> [version]'); process.exit(1); }
 const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 const version = process.argv[3] || pkg.version;
