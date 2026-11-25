@@ -1,0 +1,12 @@
+{
+  "key": "hse",
+  "appId": "com.bvqss.desktop.hse",
+  "productName": "BVQSS HSE",
+  "description": "Health, safety and environment for construction sites and healthcare facilities",
+  "startUrl": "https://bvqsshse.com/app",
+  "roots": ["bvqsshse.com"],
+  "workspaces": false,
+  "extraHosts": ["lyernutjfuagqjfmvysg.supabase.co"],
+  "guide": "https://bvqsshse.com/guide",
+  "color": "#142237"
+}
