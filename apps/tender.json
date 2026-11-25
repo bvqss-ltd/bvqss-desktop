@@ -1,0 +1,12 @@
+{
+  "key": "tender",
+  "appId": "com.bvqss.desktop.tender",
+  "productName": "BVQSS Tender",
+  "description": "E-tendering, bid evaluation, project documents and contract administration",
+  "startUrl": "https://bvqsstender.com/app",
+  "roots": ["bvqsstender.com"],
+  "workspaces": false,
+  "extraHosts": ["lyernutjfuagqjfmvysg.supabase.co"],
+  "guide": "https://bvqsstender.com/guide",
+  "color": "#142237"
+}

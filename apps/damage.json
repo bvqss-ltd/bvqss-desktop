@@ -1,0 +1,12 @@
+{
+  "key": "damage",
+  "appId": "com.bvqss.desktop.damage",
+  "productName": "BVQSS Damage",
+  "description": "Damage assessment and loss adjusting: requests, field assessments, estimates and reports",
+  "startUrl": "https://bvqssdamage.com/signin",
+  "roots": ["bvqssdamage.com"],
+  "workspaces": true,
+  "extraHosts": ["ovxysolfhtjrnhniulxc.supabase.co"],
+  "guide": "https://bvqssdamage.com/guide",
+  "color": "#b45309"
+}

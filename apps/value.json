@@ -1,0 +1,12 @@
+{
+  "key": "value",
+  "appId": "com.bvqss.desktop.value",
+  "productName": "BVQSS Value",
+  "description": "Property valuation: jobs, field inspections, comparables and reports",
+  "startUrl": "https://bvqssvalue.com/signin",
+  "roots": ["bvqssvalue.com"],
+  "workspaces": true,
+  "extraHosts": ["ovxysolfhtjrnhniulxc.supabase.co"],
+  "guide": "https://bvqssvalue.com/guide",
+  "color": "#0f766e"
+}
