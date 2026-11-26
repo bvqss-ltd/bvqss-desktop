@@ -41,6 +41,16 @@ const builder = {
     extendInfo: { NSCameraUsageDescription: 'Take photos of properties and sites for your records.', NSLocationWhenInUseUsageDescription: 'Place a property on the map from where you are.', NSMicrophoneUsageDescription: 'Record video notes on site.' },
     notarize: !!process.env.APPLE_API_KEY,
   },
+  // Lock down the Electron runtime so the installed app can't be repurposed to run other code
+  electronFuses: {
+    runAsNode: false,
+    enableCookieEncryption: true,
+    enableNodeOptionsEnvironmentVariable: false,
+    enableNodeCliInspectArguments: false,
+    enableEmbeddedAsarIntegrityValidation: true,
+    onlyLoadAppFromAsar: true,
+    grantFileProtocolExtraPrivileges: false,
+  },
   dmg: { artifactName: `${slug}-\${version}-mac.\${ext}`, title: cfg.productName },
 };
 fs.writeFileSync(path.join(out, 'builder.json'), JSON.stringify(builder, null, 2));
