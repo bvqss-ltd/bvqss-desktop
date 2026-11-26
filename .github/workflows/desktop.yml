@@ -69,7 +69,8 @@ jobs:
 
       - name: Build
         shell: bash
-        run: npx electron-builder --config build/builder.json --publish never ${{ runner.os == 'macOS' && '--mac' || '--win' }}
+        # prepare again here: the signing/notarization settings from the previous step are only visible from this step on
+        run: node scripts/prepare.mjs ${{ matrix.app }} ${{ inputs.version }} && npx electron-builder --config build/builder.json --publish never ${{ runner.os == 'macOS' && '--mac' || '--win' }}
 
       - name: Remove the key
         if: always() && runner.os == 'macOS'
